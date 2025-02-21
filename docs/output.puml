@@ -1,0 +1,241 @@
+@startuml
+skinparam classAttributeIconSize 0
+class CustomerTwoPassengersPaypalPayment{
++ init() : void
+}
+class PassengerPlane{
++ model : String
++ passengerCapacity : int
++ crewCapacity : int
++ PassengerPlane(model : String)
+}
+class CreditCardLimitReached{
++ initCreditCard() : void
+thenThePaymentAndBookingShouldNotSucceed() : void
+}
+class Flight{
+- number : int
+- departure : Airport
+- arrival : Airport
+# aircraft : Object
++ Flight(number : int, departure : Airport, arrival : Airport, aircraft : Object)
+- checkValidity() : void
+- isAircraftValid(airport : Airport) : boolean
++ getAircraft() : Object
++ getNumber() : int
++ getDeparture() : Airport
++ getArrival() : Airport
++ toString() : String
+}
+class ScheduledFlight{
+- passengers : List<Passenger>
+- departureTime : Date
+- currentPrice : double
++ ScheduledFlight(number : int, departure : Airport, arrival : Airport, aircraft : Object, departureTime : Date)
++ ScheduledFlight(number : int, departure : Airport, arrival : Airport, aircraft : Object, departureTime : Date, currentPrice : double)
++ getCrewMemberCapacity() : int
++ addPassengers(passengers : List<Passenger>) : void
++ removePassengers(passengers : List<Passenger>) : void
++ getCapacity() : int
++ getAvailableCapacity() : int
++ getDepartureTime() : Date
++ getPassengers() : List<Passenger>
++ getCurrentPrice() : double
++ setCurrentPrice(currentPrice : double) : void
+}
+ScheduledFlight --|> Flight
+class CreditCard{
+- amount : double
+- number : String
+- date : Date
+- cvv : String
+- valid : boolean
++ CreditCard(number : String, date : Date, cvv : String)
++ setAmount(amount : double) : void
++ getAmount() : double
++ isValid() : boolean
++ setValid() : void
+}
+class Order{
+- id : UUID
+- price : double
+- isClosed : boolean
+- customer : Customer
+- passengers : List<Passenger>
++ Order()
++ getId() : UUID
++ getPrice() : double
++ setPrice(price : double) : void
++ getCustomer() : Customer
++ setCustomer(customer : Customer) : void
++ getPassengers() : List<Passenger>
++ setPassengers(passengers : List<Passenger>) : void
++ isClosed() : boolean
++ setClosed() : void
+}
+class FlightIsPossible{
++ initFlights() : void
+}
+class Passenger{
+- name : String
++ Passenger(name : String)
++ getName() : String
+}
+class CreditCardValid{
++ initCreditCard() : void
+thenTheBookingShouldSucceed() : void
+}
+class NoHelicoptersInFrankfurt{
++ initFlights() : void
+thenFlightNotAvailable() : void
+}
+class GivenAnEmptySchedule{
+thenTheSizeOfTheScheduleShouldBeZero() : void
+thenSearchForAnUnknownElementShouldReturnNull() : void
+thenSearchForAnKnownElementShouldReturnNull() : void
+thenScheduleShouldYieldEmpty() : void
+}
+class Customer{
+- email : String
+- name : String
+- orders : List<Order>
++ Customer(name : String, email : String)
++ createOrder(passengerNames : List<String>, flights : List<ScheduledFlight>, price : double) : FlightOrder
+- isOrderValid(passengerNames : List<String>, flights : List<ScheduledFlight>) : boolean
++ getEmail() : String
++ setEmail(email : String) : void
++ getName() : String
++ setName(name : String) : void
++ getOrders() : List<Order>
++ setOrders(orders : List<Order>) : void
+}
+class WhenAFlightIsScheduled{
+- flight : Flight
+- departure : Date
+scheduleOneFlight() : void
+thenScheduleShouldContainOneElement() : void
+thenScheduleShouldContainCorrectElement() : void
+thenSearchShouldReturnFlight() : void
+thenRemoveShouldYieldEmpty() : void
+}
+class GivenAnExistingSchedule{
+airports : List<Airport>
+flights : List<Flight>
+initializeSchedule() : void
+thenScheduleShouldContainOneElement() : void
+}
+class H1Empty{
+thenTheBookingShouldSucceed() : void
+}
+class CreditCardNotValid{
++ initCreditCard() : void
+thenTheBookingShouldNotSucceed() : void
+}
+class AFlightIsSearched{
+thenTheFlightShouldBeReturned() : void
+thenNullShouldBeReturned() : void
+}
+class H1FullyBooked{
++ initPassengers() : void
+thenTheBookingShouldBeStopped() : void
+}
+class Runner{
+{static} airports : List<Airport>
+{static} aircrafts : List<Object>
+{static} flights : List<Flight>
+{static} schedule : Schedule
++ {static} main(args : String[]) : void
+}
+class AFlightIsScheduled{
+thenTheScheduleShouldContainTheAddedFlight() : void
+}
+class Airport{
+- name : String
+- code : String
+- location : String
+- flights : List<Flight>
+- allowedAircrafts : String[]
++ Airport(name : String, code : String, location : String)
++ Airport(name : String, code : String, location : String, allowedAircrafts : String[])
++ getName() : String
++ getCode() : String
++ getLocation() : String
++ getFlights() : List<Flight>
++ setFlights(flights : List<Flight>) : void
++ getAllowedAircrafts() : String[]
+}
+class AFlightIsRemoved{
+thenAFlightShouldBeRemoved() : void
+thenTheCorrectFlightShouldBeRemoved() : void
+}
+class Helicopter{
+- model : String
+- passengerCapacity : int
++ Helicopter(model : String)
++ getModel() : String
++ getPassengerCapacity() : int
+}
+class ScenarioTest{
+- schedule : Schedule
+- customer : Customer
+- startAirport : Airport
+- destinationAirport : Airport
+- flight : Flight
++ initSchedule() : void
+}
+class TestUtil{
++ {static} addDays(date : Date, days : int) : Date
+}
+class FlightOrder{
+- flights : List<ScheduledFlight>
+{static} noFlyList : List<String>
++ FlightOrder(flights : List<ScheduledFlight>)
++ {static} getNoFlyList() : List<String>
++ getScheduledFlights() : List<ScheduledFlight>
+- isOrderValid(customer : Customer, passengerNames : List<String>, flights : List<ScheduledFlight>) : boolean
++ processOrderWithCreditCardDetail(number : String, expirationDate : Date, cvv : String) : boolean
++ processOrderWithCreditCard(creditCard : CreditCard) : boolean
+- cardIsPresentAndValid(card : CreditCard) : boolean
++ processOrderWithPayPal(email : String, password : String) : boolean
++ payWithCreditCard(card : CreditCard, amount : double) : boolean
++ payWithPayPal(email : String, password : String, amount : double) : boolean
+}
+FlightOrder --|> Order
+class ScheduleTest{
+- schedule : Schedule
++ initSchedule() : void
+}
+class Schedule{
+- scheduledFlights : List<ScheduledFlight>
++ Schedule()
++ getScheduledFlights() : List<ScheduledFlight>
++ scheduleFlight(flight : Flight, date : Date) : void
++ removeFlight(flight : Flight) : void
++ removeScheduledFlight(flight : ScheduledFlight) : void
++ searchScheduledFlight(flightNumber : int) : ScheduledFlight
++ clear() : void
+}
+class PassengerDrone{
+- model : String
++ PassengerDrone(model : String)
+}
+class CustomerOnePassengerCreditCardPayment{
+- creditCard : CreditCard
++ init() : void
+}
+class Paypal{
++ {static} DATA_BASE : Map<String,String>
+}
+Flight--"- departure" Airport
+Flight--"- arrival" Airport
+Order--"- customer" Customer
+WhenAFlightIsScheduled--"- flight" Flight
+Runner--"{static} schedule" Schedule
+ScenarioTest--"- schedule" Schedule
+ScenarioTest--"- customer" Customer
+ScenarioTest--"- startAirport" Airport
+ScenarioTest--"- destinationAirport" Airport
+ScenarioTest--"- flight" Flight
+ScheduleTest--"- schedule" Schedule
+CustomerOnePassengerCreditCardPayment--"- creditCard" CreditCard
+@enduml
