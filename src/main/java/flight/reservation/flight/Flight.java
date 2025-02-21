@@ -1,11 +1,9 @@
 package flight.reservation.flight;
 
-import flight.reservation.Airport;
-import flight.reservation.plane.Helicopter;
-import flight.reservation.plane.PassengerDrone;
-import flight.reservation.plane.PassengerPlane;
-
 import java.util.Arrays;
+
+import flight.reservation.Airport;
+import flight.reservation.plane.vehicle;
 
 public class Flight {
 
@@ -29,19 +27,12 @@ public class Flight {
     }
 
     private boolean isAircraftValid(Airport airport) {
-        return Arrays.stream(airport.getAllowedAircrafts()).anyMatch(x -> {
-            String model;
-            if (this.aircraft instanceof PassengerPlane) {
-                model = ((PassengerPlane) this.aircraft).model;
-            } else if (this.aircraft instanceof Helicopter) {
-                model = ((Helicopter) this.aircraft).getModel();
-            } else if (this.aircraft instanceof PassengerDrone) {
-                model = "HypaHype";
-            } else {
-                throw new IllegalArgumentException(String.format("Aircraft is not recognized"));
-            }
-            return x.equals(model);
-        });
+        // checks if a given aircraft is allowed to operate at a specific airport based on its model.
+        if (!(this.aircraft instanceof vehicle)) {
+            throw new IllegalArgumentException("Aircraft is not recognized");
+        }
+        String model = ((vehicle) this.aircraft).getModel();
+        return Arrays.stream(airport.getAllowedAircrafts()).anyMatch(x -> x.equals(model));
     }
 
     public Object getAircraft() {

@@ -1,5 +1,5 @@
 @startuml
-skinparam classAttributeIconSize 0
+' skinparam classAttributeIconSize 0
 class CustomerTwoPassengersPaypalPayment{
 + init() : void
 }
@@ -81,10 +81,7 @@ class Passenger{
 + Passenger(name : String)
 + getName() : String
 }
-class CreditCardValid{
-+ initCreditCard() : void
-thenTheBookingShouldSucceed() : void
-}
+
 class NoHelicoptersInFrankfurt{
 + initFlights() : void
 thenFlightNotAvailable() : void
@@ -126,10 +123,6 @@ thenScheduleShouldContainOneElement() : void
 }
 class H1Empty{
 thenTheBookingShouldSucceed() : void
-}
-class CreditCardNotValid{
-+ initCreditCard() : void
-thenTheBookingShouldNotSucceed() : void
 }
 class AFlightIsSearched{
 thenTheFlightShouldBeReturned() : void

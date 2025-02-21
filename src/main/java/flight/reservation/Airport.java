@@ -13,6 +13,7 @@ public class Airport {
     private String[] allowedAircrafts;
 
     public Airport(String name, String code, String location) {
+        // allowed aircrafts in not given as input
         this.name = name;
         this.code = code;
         this.location = location;
@@ -20,6 +21,7 @@ public class Airport {
     }
 
     public Airport(String name, String code, String location, String[] allowedAircrafts) {
+        // Allowed aircrafts are given as input
         this.name = name;
         this.code = code;
         this.location = location;
