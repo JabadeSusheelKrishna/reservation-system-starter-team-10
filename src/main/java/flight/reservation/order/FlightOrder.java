@@ -3,7 +3,11 @@ package flight.reservation.order;
 import flight.reservation.Customer;
 import flight.reservation.flight.ScheduledFlight;
 import flight.reservation.payment.CreditCard;
+import flight.reservation.payment.PaymentGateway;
 import flight.reservation.payment.Paypal;
+import flight.reservation.payment.PaypalAdapter;
+import flight.reservation.payment.PaypalInstance;
+import flight.reservation.payment.CreditCardAdapter;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -71,7 +75,7 @@ public class FlightOrder extends Order {
             return true;
         }
         // validate payment information
-        if (email == null || password == null || !email.equals(Paypal.DATA_BASE.get(password))) {
+        if(!paypalIsPresentAndValid(email, password)){
             throw new IllegalStateException("Payment information is not set or not valid.");
         }
         boolean isPaid = payWithPayPal(email, password, this.getPrice());
@@ -81,16 +85,15 @@ public class FlightOrder extends Order {
         return isPaid;
     }
 
+    private boolean paypalIsPresentAndValid(String email, String password) {
+        return email != null && password != null && email.equals(Paypal.DATA_BASE.get(password));
+    }
+
     public boolean payWithCreditCard(CreditCard card, double amount) throws IllegalStateException {
         if (cardIsPresentAndValid(card)) {
-            System.out.println("Paying " + getPrice() + " using Credit Card.");
-            double remainingAmount = card.getAmount() - getPrice();
-            if (remainingAmount < 0) {
-                System.out.printf("Card limit reached - Balance: %f%n", remainingAmount);
-                throw new IllegalStateException("Card limit reached");
-            }
-            card.setAmount(remainingAmount);
-            return true;
+            // pay
+            PaymentGateway paymentGateway = new CreditCardAdapter(card);
+            return paymentGateway.pay(amount);
         } else {
             return false;
         }
@@ -98,8 +101,9 @@ public class FlightOrder extends Order {
 
     public boolean payWithPayPal(String email, String password, double amount) throws IllegalStateException {
         if (email.equals(Paypal.DATA_BASE.get(password))) {
-            System.out.println("Paying " + getPrice() + " using PayPal.");
-            return true;
+            // pay
+            PaymentGateway paymentGateway = new PaypalAdapter(new PaypalInstance(email, password));
+            return paymentGateway.pay(amount);
         } else {
             return false;
         }

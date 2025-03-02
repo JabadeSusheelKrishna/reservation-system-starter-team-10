@@ -34,4 +34,14 @@ public class PassengerPlane implements vehicle{
     public String getModel() {
         return this.model;
     }
+
+    @Override
+    public int getcrewCapacity() {
+        return this.crewCapacity;
+    }
+
+    @Override
+    public int getPassengerCapacity() {
+        return this.passengerCapacity;
+    }
 }
