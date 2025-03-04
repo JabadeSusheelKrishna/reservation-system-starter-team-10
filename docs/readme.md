@@ -204,3 +204,83 @@ public boolean payWithPayPal(String email, String password, double amount) throw
     }
 }
 ```
+
+---
+
+## Factory Design Pattern
+
+### Modified Files:
+- `flight.reservation.Customer.java`
+- `flight.reservation.order.FlightOrderFactory.java`
+- `flight.reservation.order.OrderFactory.java`
+- `flight.reservation.order.FlightOrder.java`
+
+### Why Did We Use the Factory Design Pattern?
+- We have only flight class. but if there is a possibility for other classes to come in future, we can just implement a factory Design pattern. so that it is easily extensible.
+- The creation of `FlightOrder` contained logic that should be centralized for maintainability and scalability.
+- The `Customer` class was responsible for too many things, including validation, order creation, and linking passengers, violating the **Single Responsibility Principle (SRP)**.
+- Introducing a **Factory Pattern** allows better encapsulation of object creation and provides a structured way to create `FlightOrder` objects while ensuring validation.
+
+### How Did We Use the Factory Design Pattern?
+- We introduced an **interface `OrderFactory`** that defines a standard contract for creating orders.
+- We implemented **`FlightOrderFactory`**, a concrete factory class that follows `OrderFactory` and encapsulates the logic of creating `FlightOrder` objects.
+- We modified **`Customer.java`** so that it no longer handles order creation directly but instead delegates it to `FlightOrderFactory`.
+- This ensures **flexibility**, making it easy to introduce new order types in the future (e.g., `HotelOrderFactory`, `TrainOrderFactory`).
+
+### Code Changes Made:
+#### **OrderFactory Interface**
+```java
+// OrderFactory.java
+public interface OrderFactory {
+    Order createOrder(Customer customer, List<String> passengerNames, List<ScheduledFlight> flights, double price);
+}
+```
+
+#### **FlightOrderFactory Implementation**
+```java
+// FlightOrderFactory.java
+public class FlightOrderFactory implements OrderFactory {
+    @Override
+    public FlightOrder createOrder(Customer customer, List<String> passengerNames, List<ScheduledFlight> flights, double price) {
+        if (!isOrderValid(customer, passengerNames, flights)) {
+            throw new IllegalStateException("Order is not valid");
+        }
+        FlightOrder order = new FlightOrder(flights);
+        order.setCustomer(customer);
+        order.setPrice(price);
+        
+        List<Passenger> passengers = new ArrayList<>();
+        for (String name : passengerNames) {
+            passengers.add(new Passenger(name));
+        }
+        order.setPassengers(passengers);
+        
+        for (ScheduledFlight scheduledFlight : order.getScheduledFlights()) {
+            scheduledFlight.addPassengers(passengers);
+        }
+        
+        customer.getOrders().add(order);
+        return order;
+    }
+}
+```
+
+#### **Customer Class Modification**
+```java
+// Customer.java
+public class Customer {
+    private final OrderFactory orderFactory;
+
+    public Customer(String name, String email) {
+        this.name = name;
+        this.email = email;
+        this.orders = new ArrayList<>();
+        this.orderFactory = new FlightOrderFactory(); // Inject factory instance
+    }
+
+    public FlightOrder createOrder(List<String> passengerNames, List<ScheduledFlight> flights, double price) {
+        return (FlightOrder) orderFactory.createOrder(this, passengerNames, flights, price);
+    }
+}
+```
+
