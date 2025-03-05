@@ -389,4 +389,4 @@ public class NotifiedPassenger extends Passenger implements FlightObserver {
 }
 ```
 
-<i>Note : few client funtions are implemented in `Runner.Java` which just calls the functionality.</i>
+<i>by the way, if this project gets into production stage, I would use Paypal method to order flights. because it doesn't deduct money from your account at all =). But, wait a minute!. I think there are only 2 accounts who have the permission. (-_-)</i>
