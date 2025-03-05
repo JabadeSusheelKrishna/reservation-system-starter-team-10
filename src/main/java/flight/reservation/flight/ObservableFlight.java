@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ObservableFlight extends Flight implements FlightSubject {
     private String status; // Flight status (e.g., On Time, Delayed, Cancelled)
-    private List<FlightObserver> FlightObservers; // List of passengers who want updates
+    private List<FlightObserver> FlightObservers; 
 
     public ObservableFlight(int number, Airport departure, Airport arrival, Object aircraft) throws IllegalArgumentException {
         super(number, departure, arrival, aircraft); // Call the existing Flight constructor
@@ -29,7 +29,7 @@ public class ObservableFlight extends Flight implements FlightSubject {
 
     public void setStatus(String status) {
         this.status = status;
-        notifyObservers(); // Notify passengers when status changes
+        notifyObservers(); 
     }
 
     public String getStatus() {

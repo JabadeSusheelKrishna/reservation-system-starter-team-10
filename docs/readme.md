@@ -284,3 +284,107 @@ public class Customer {
 }
 ```
 
+## Observer Design Pattern
+
+### Added/modified Files:
+- `flight.reservation.flight.FlightSubject.java`
+- `flight.reservation.flight.ObservableFlight.java`
+- `flight.reservation.NotifiedPassenger.java`
+- `flight.reservation.FlightObserver.java`
+
+### Why Did We Use the Observer Design Pattern?
+- In a flight reservation system, passengers may want to receive updates about their flight status (e.g., "On Time", "Delayed", "Cancelled").
+- Instead of manually checking the flight status repeatedly, passengers can subscribe to flight notifications.
+- The **Observer Design Pattern** allows the system to efficiently notify multiple passengers (observers) when the flight status changes.
+- This pattern decouples the flight management logic from the notification mechanism, making it more maintainable and scalable.
+
+### How Did We Use the Observer Design Pattern?
+- Created the FlightObserver Interface:
+    - This defines a method update(String flightNumber, String status) that all observers must implement.
+    - Any class implementing this interface will receive flight status updates.
+- Created the FlightSubject Interface:
+    - This interface provides methods to add, remove, and notify observers.
+    - Any class implementing this interface can manage a list of observers.
+- Modified ObservableFlight Class (The Subject):
+    - Extends the Flight class and implements FlightSubject.
+    - Manages a list of registered observers (List<FlightObserver>).
+    - When the flight status changes (delayed, cancelled, etc.), it notifies all registered observers.
+- Created the NotifiedPassenger Class (An Observer):
+    - Extends Passenger and implements FlightObserver.
+    - When notified, it prints a message for the passenger about the flight status change.
+- We implemented flight cancellation and delay mechanisms by simply updating the status message. Since there is no actual implementation for canceling or delaying flights, the status update acts as a notification system for passengers.
+
+### Code Changes Made:
+```java
+// FlightSubject interface
+interface FlightSubject {
+    void addObserver(FlightObserver observer);
+    void removeObserver(FlightObserver observer);
+    void notifyObservers();
+}
+
+// ObservableFlight class (Subject)
+public class ObservableFlight extends Flight implements FlightSubject {
+    private String status; // Flight status (e.g., On Time, Delayed, Cancelled)
+    private List<FlightObserver> FlightObservers; 
+
+    public ObservableFlight(int number, Airport departure, Airport arrival, Object aircraft) throws IllegalArgumentException {
+        super(number, departure, arrival, aircraft); // Call the existing Flight constructor
+        this.status = "On Time"; // Default status
+        this.FlightObservers = new ArrayList<>();
+    }
+
+    public void cancelFlight() {
+        this.status = "Cancelled";
+        notifyObservers();
+    }
+
+    public void delayFlight(String reason) {
+        this.status = "Delayed: " + reason;
+        notifyObservers();
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+        notifyObservers(); 
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public void addObserver(FlightObserver observer) {
+        FlightObservers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(FlightObserver observer) {
+        FlightObservers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (FlightObserver observer : FlightObservers) {
+            observer.update("Flight " + getNumber(), status);
+        }
+    }
+}
+
+// FlightObserver interface
+public interface FlightObserver {
+    void update(String flightNumber, String status);
+}
+
+// NotifiedPassenger class (Observer)
+public class NotifiedPassenger extends Passenger implements FlightObserver {
+    public NotifiedPassenger(String name) {
+        super(name);
+    }
+
+    @Override
+    public void update(String flightNumber, String status) {
+        System.out.println("Notification for " + getName() + ": " + flightNumber + " is now " + status);
+    }
+}
+```
