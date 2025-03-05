@@ -388,3 +388,5 @@ public class NotifiedPassenger extends Passenger implements FlightObserver {
     }
 }
 ```
+
+<i>Note : few client funtions are implemented in `Runner.Java` which just calls the functionality.</i>
